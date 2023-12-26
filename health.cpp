@@ -29,9 +29,3 @@ void Health::decrease(){
 int Health::getHealth(){
     return health;
 }
-
-void Health::resetHealth()
-{
-    health = 3;
-    setPlainText(QString("Health: ") + QString::number(health));
-}

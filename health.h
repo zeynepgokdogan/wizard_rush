@@ -10,9 +10,6 @@ public:
     int getHealth();
 private:
     int health;
-
-public slots:
-    void resetHealth();
 };
 
 #endif // HEALTH_H
