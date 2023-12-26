@@ -22,6 +22,33 @@ Game::Game(QWidget *parent): QGraphicsView(parent){
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setFixedSize(800,600);
 
+    // create the score/health
+    score = new Score();
+    scene->addItem(score);
+    health = new Health();
+    health->setPos(health->x(),health->y()+25);
+    scene->addItem(health);
+
+    player =NULL;
+    player2 = NULL;
+}
+
+void Game::keyPressEvent(QKeyEvent *event)
+{
+    if(player)
+        player->keyPressEvent(event);
+    else
+        QGraphicsView::keyPressEvent(event);
+}
+
+void Game::startGame()
+{
+
+    //remove button
+    scene->removeItem(playButton);
+    scene->removeItem(quitButton);
+    scene->removeItem(titleText);
+
     // create the player
     player = new Player();
     player->setPos(80,400); // TODO generalize to always be in the middle bottom of screen
@@ -31,25 +58,19 @@ Game::Game(QWidget *parent): QGraphicsView(parent){
     // add the player to the scene
     scene->addItem(player);
 
-    // create the score/health
-    score = new Score();
-    scene->addItem(score);
-    health = new Health();
-    health->setPos(health->x(),health->y()+25);
-    scene->addItem(health);
-}
+    if (player2)
+        player2->deleteLater();
+    player2 = player;
 
-void Game::startGame()
-{
 
-    scene->removeItem(playButton);
-    scene->removeItem(quitButton);
-    scene->removeItem(titleText);
 
+    //Add enemies
     QTimer *timer = new QTimer();
     QObject::connect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
     int randomSecond = rand() % 1500;
     timer->start(1500 + randomSecond);
+
+
 }
 
 void Game::displayMainMenu(QString title, QString play)
@@ -84,6 +105,5 @@ void Game::displayMainMenu(QString title, QString play)
 void Game::gameOver(){
     displayMainMenu("Game Over!","Play Again");
     scene->removeItem(player);
-    scene->removeItem(score);
-    scene->removeItem(health);
+
 }
