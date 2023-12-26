@@ -24,10 +24,12 @@ public:
     Health * health;
     Button *playButton;
     Button *quitButton;
-    void gameOver();
+
+
 
 public slots:
     void startGame();
+    void gameOver();
 
 };
 

@@ -10,6 +10,11 @@ public:
     int getScore();
 private:
     int score;
+
+
+public slots:
+    void resetScore();
 };
+
 
 #endif // SCORE_H

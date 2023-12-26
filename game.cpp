@@ -7,6 +7,7 @@
 #include <QImage>
 #include <QGraphicsView>
 
+
 Game::Game(QWidget *parent): QGraphicsView(parent){
     // create the scene
     scene = new QGraphicsScene();
@@ -43,35 +44,60 @@ void Game::keyPressEvent(QKeyEvent *event)
 
 void Game::startGame()
 {
+    // Remove previous instances of Health and Score
+    if (health) {
+        scene->removeItem(health);
+        delete health;
+        health = nullptr;
+    }
 
-    //remove button
+    if (score) {
+        scene->removeItem(score);
+        delete score;
+        score = nullptr;
+    }
+
+    // create new instances of Health and Score
+    health = new Health();
+    health->setPos(health->x(), health->y() + 25);
+    scene->addItem(health);
+
+    score = new Score();
+    scene->addItem(score);
+
+    // Reset the score to zero
+    score->resetScore();
+
+    // Reset the health to its initial value
+    health->resetHealth();
+
+    // Remove buttons
     scene->removeItem(playButton);
     scene->removeItem(quitButton);
     scene->removeItem(titleText);
 
-    // create the player
+    // Create the player
     player = new Player();
-    player->setPos(80,400); // TODO generalize to always be in the middle bottom of screen
-    // make the player focusable and set it to be the current focus
+    player->setPos(80, 400); // TODO generalize to always be in the middle bottom of the screen
+
+    // Make the player focusable and set it to be the current focus
     player->setFlag(QGraphicsItem::ItemIsFocusable);
     player->setFocus();
-    // add the player to the scene
+
+    // Add the player to the scene
     scene->addItem(player);
 
     if (player2)
         player2->deleteLater();
     player2 = player;
 
-
-
-    //Add enemies
+    // Add enemies
     QTimer *timer = new QTimer();
     QObject::connect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
     int randomSecond = rand() % 1500;
     timer->start(1500 + randomSecond);
-
-
 }
+
 
 void Game::displayMainMenu(QString title, QString play)
 {
@@ -84,26 +110,39 @@ void Game::displayMainMenu(QString title, QString play)
     titleText->setPos(xPos, yPos);
     scene->addItem(titleText);
 
-    // Create Button
-    playButton = new Button(play, titleText);
-    int pxPos = 160;
-    int pyPos = 160;
-    playButton->setPos(pxPos, pyPos);
+    // Calculate button positions relative to the width of the screen
+    int buttonWidth = 200; // Adjust this value based on your button size
+    int buttonXPos = width() / 2 - buttonWidth / 2;
+    int playButtonYPos = 300;
+    int quitButtonYPos = 370;
 
+    // Create Play Button
+    playButton = new Button(play, titleText);
+    playButton->setPos(buttonXPos, playButtonYPos);
     connect(playButton, SIGNAL(clicked()), this, SLOT(startGame()));
     scene->addItem(playButton);
+    playButton->setFlag(QGraphicsItem::ItemIsFocusable);
+    playButton->setFocus();
+
 
     // Create Quit Button
     quitButton = new Button("Quit", titleText);
-    int qxPos = 160;
-    int qyPos = 230;
-    quitButton->setPos(qxPos, qyPos);
+    quitButton->setPos(buttonXPos, quitButtonYPos);
     connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
     scene->addItem(quitButton);
+    quitButton->setFlag(QGraphicsItem::ItemIsFocusable);
+    quitButton->setFocus();
 }
 
-void Game::gameOver(){
-    displayMainMenu("Game Over!","Play Again");
-    scene->removeItem(player);
+void Game::gameOver() {
+    qDebug() << "Game Over";
 
+    if (player) {
+        disconnect(player, SIGNAL(keyPressEvent(QKeyEvent*)), 0, 0);
+        player->clearFocus(); // Clear the focus from the player
+        scene->removeItem(player);
+    }
+
+    // Display the main menu
+    displayMainMenu("Game Over!","Play Again");
 }
