@@ -13,11 +13,13 @@ class Game: public QGraphicsView{
     Q_OBJECT
 public:
     Game(QWidget *parent = nullptr);
+    void keyPressEvent(QKeyEvent *event);
     void displayMainMenu(QString title, QString play);
     QGraphicsTextItem *titleText;
     QGraphicsScene * scene;
     QGraphicsScene * scene2;
     Player * player;
+    Player * player2;
     Score * score;
     Health * health;
 
