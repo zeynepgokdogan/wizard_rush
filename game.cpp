@@ -59,7 +59,6 @@ void Game::startGame()
     score = new Score();
     scene->addItem(score);
 
-    //remove button
     // Reset the score to zero
     score->resetScore();
 
@@ -71,20 +70,14 @@ void Game::startGame()
     scene->removeItem(quitButton);
     scene->removeItem(titleText);
 
-    // create the player
-    // Create the player
-    player = new Player();
-    player->setPos(80,400); // TODO generalize to always be in the middle bottom of screen
-    // make the player focusable and set it to be the current focus
-    player->setPos(80, 400); // TODO generalize to always be in the middle bottom of the screen
 
-    // Make the player focusable and set it to be the current focus
+    // Create the player and Add the player to the scene
+    player = new Player();
+    player->setPos(80, 400);
     player->setFlag(QGraphicsItem::ItemIsFocusable);
     player->setFocus();
-    // add the player to the scene
-
-    // Add the player to the scene
     scene->addItem(player);
+
 
     if (player2)
         player2->deleteLater();
@@ -93,11 +86,14 @@ void Game::startGame()
 
 
     //Add enemies
-    // Add enemies
     QTimer *timer = new QTimer();
     QObject::connect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
     int randomSecond = rand() % 1500;
     timer->start(1500 + randomSecond);
+
+    // Connect player's keyPressEvent signal again
+    connect(this, SIGNAL(playerKeyPressed(QKeyEvent*)), player, SLOT(keyPressEvent(QKeyEvent*)));
+    connect(player, SIGNAL(keyPressEvent(QKeyEvent*)), this, SIGNAL(playerKeyPressed(QKeyEvent*)));
 
 
 }
@@ -135,7 +131,7 @@ void Game::gameOver() {
     qDebug() << "Game Over";
 
     if (player) {
-        disconnect(player, SIGNAL(keyPressEvent(QKeyEvent*)), 0, 0);
+        disconnect(this, SIGNAL(playerKeyPressed(QKeyEvent*)), player, SLOT(keyPressEvent(QKeyEvent*)));
         player->clearFocus(); // Clear the focus from the player
         scene->removeItem(player);
     }
