@@ -6,5 +6,8 @@
         <file>assets/enemy.png</file>
         <file>assets/skull.png</file>
         <file>assets/wizardE.png</file>
+        <file>assets/character1.png</file>
+        <file>assets/character2.png</file>
+        <file>assets/character3.png</file>
     </qresource>
 </RCC>
