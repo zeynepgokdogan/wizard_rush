@@ -42,64 +42,89 @@ void Game::keyPressEvent(QKeyEvent *event)
 
 void Game::displayPlayerSelection(QString title, QString play)
 {
+    // Remove Health and Score
+    scene->removeItem(score);
+    scene->removeItem(health);
+
     // Declare titleText here
     titleText_1 = new QGraphicsTextItem(title);
-    QFont titleFont("arial", 30);
+    QFont titleFont("arial", 50);
     titleText_1->setFont(titleFont);
-    int xPos = 800 / 2 - titleText_1->boundingRect().width() / 2;
-    int yPos = 150;
-    titleText_1->setPos(xPos, yPos);
+    titleText_1->setDefaultTextColor(Qt::red);
+    int titleXPos = width() / 2 - titleText_1->boundingRect().width() / 2;
+    int titleYPos = 150;
+    titleText_1->setPos(titleXPos, titleYPos);
     scene->addItem(titleText_1);
 
+    // second title
+    chooseCharacterText = new QGraphicsTextItem("Choose A Character");
+    QFont font("arial", 20);
+    chooseCharacterText->setFont(font);
+    int xPos = width() / 2 - chooseCharacterText->boundingRect().width() / 2;
+    int yPos = 250;
+    chooseCharacterText->setPos(xPos, yPos);
+    scene->addItem(chooseCharacterText);
+
     // Create Buttons
+    int buttonWidth = 150; // Adjust this value as needed
+    int buttonHeight = 50; // Adjust this value as needed
+    int spacing = 20;      // Adjust this value as needed
+
     player1Button = new Button("Player 1", titleText_1);
-    int p1xPos = 800 / 4 - player1Button->boundingRect().width() / 2;
-    int p1yPos = 600 / 2;
-    player1Button->setPos(p1xPos, p1yPos);
+    player1Button->setPos(width() / 2 - (buttonWidth + spacing) * 2, 600 / 2);
     connect(player1Button, &Button::clicked, [=]() {
         displayMainMenu("Player 1 Selected", "Play");
     });
     scene->addItem(player1Button);
 
     player2Button = new Button("Player 2", titleText_1);
-    int p2xPos = 800 / 2 - player2Button->boundingRect().width() / 2;
-    int p2yPos = 600 / 2;
-    player2Button->setPos(p2xPos, p2yPos);
+    player2Button->setPos(width() / 2 - buttonWidth / 2, 600 / 2);
     connect(player2Button, &Button::clicked, [=]() {
         displayMainMenu("Player 2 Selected", "Play");
     });
     scene->addItem(player2Button);
 
     player3Button = new Button("Player 3", titleText_1);
-    int p3xPos = 800 * 3 / 4 - player3Button->boundingRect().width() / 2;
-    int p3yPos = 600 / 2;
-    player3Button->setPos(p3xPos, p3yPos);
+    player3Button->setPos(width() / 2 + spacing, 600 / 2);
     connect(player3Button, &Button::clicked, [=]() {
         displayMainMenu("Player 3 Selected", "Play");
     });
     scene->addItem(player3Button);
-
 }
+
+
+
+
 
 void Game::displayMainMenu(QString title, QString play)
 {
-    displayMainMenu("Main Menu", "Play");
     // Remove Health and Score
     scene->removeItem(score);
     scene->removeItem(health);
+    scene->removeItem(titleText_1);
+    scene->removeItem(chooseCharacterText);
+    scene->removeItem(player1Button);
+    scene->removeItem(player2Button);
+    scene->removeItem(player3Button);
+
 
     // Declare titleText here
     titleText_2 = new QGraphicsTextItem(title);
-    QFont titleFont("arial", 50);
+    QFont titleFont("arial", 30);
     titleText_2->setFont(titleFont);
     int xPos = width() / 2 - titleText_2->boundingRect().width() / 2;
     int yPos = 150;
     titleText_2->setPos(xPos, yPos);
     scene->addItem(titleText_2);
 
+    // Create Buttons
+    int buttonWidth = 150; // Adjust this value as needed
+    int buttonHeight = 50; // Adjust this value as needed
+    int spacing = 20;      // Adjust this value as needed
+
     // Create Play Button
-    playButton = new Button("play", titleText_2);
-    int pxPos = width() / 2 - playButton->boundingRect().width() / 2;
+    playButton = new Button(play, titleText_2);
+    int pxPos = width() / 2 - buttonWidth / 2;
     int pyPos = height() / 2;
     playButton->setPos(pxPos, pyPos);
     connect(playButton, SIGNAL(clicked()), this, SLOT(startGame()));
@@ -107,7 +132,7 @@ void Game::displayMainMenu(QString title, QString play)
 
     // Create Quit Button
     quitButton = new Button("Quit", titleText_2);
-    int qxPos = width() / 2 - quitButton->boundingRect().width() / 2;
+    int qxPos = width() / 2 - buttonWidth / 2;
     int qyPos = height() / 1.5;
     quitButton->setPos(qxPos, qyPos);
     connect(quitButton, &Button::clicked, this, &Game::quitGame);
@@ -147,7 +172,7 @@ void Game::startGame()
     // Remove buttons
     scene->removeItem(playButton);
     scene->removeItem(quitButton);
-    scene->removeItem(titleText_2);
+    scene->removeItem(titleText_1);
 
 
     // Create the player and Add the player to the scene
@@ -167,9 +192,20 @@ void Game::startGame()
     int randomSecond = rand() % 1500;
     timer->start(1500 + randomSecond);
 
-    // Connect player's keyPressEvent signal again
+    // Disconnect existing connections before creating new ones
+    disconnect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
+    disconnect(this, SIGNAL(playerKeyPressed(QKeyEvent*)), player, SLOT(keyPressEvent(QKeyEvent*)));
+    disconnect(player, SIGNAL(keyPressEvent(QKeyEvent*)), this, SIGNAL(playerKeyPressed(QKeyEvent*)));
+
+    // Connect new signals
+    connect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
     connect(this, SIGNAL(playerKeyPressed(QKeyEvent*)), player, SLOT(keyPressEvent(QKeyEvent*)));
     connect(player, SIGNAL(keyPressEvent(QKeyEvent*)), this, SIGNAL(playerKeyPressed(QKeyEvent*)));
+
+
+    scene->removeItem(titleText_2);
+
+
 }
 
 void Game::quitGame()
@@ -179,8 +215,6 @@ void Game::quitGame()
 
 
 void Game::gameOver() {
-    qDebug() << "Game Over";
-
     if (player) {
         disconnect(this, SIGNAL(playerKeyPressed(QKeyEvent*)), player, SLOT(keyPressEvent(QKeyEvent*)));
         player->clearFocus(); // Clear the focus from the player
@@ -188,7 +222,7 @@ void Game::gameOver() {
     }
 
     // Display the main menu
-    displayMainMenu("Game Over!","Play Again");
+    displayMainMenu("GAME OVER!","PLAY AGAİN");
 }
 
 

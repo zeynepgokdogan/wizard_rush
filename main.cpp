@@ -9,7 +9,7 @@ int main(int argc, char *argv[]){
     game = new Game();
 
     game->show();
-    game->displayPlayerSelection("Choose A Character", "PLAY");
+    game->displayPlayerSelection("WizarD RusH", "PLAY");
 
     return a.exec();
 }

@@ -35,6 +35,7 @@ public:
 private:
     QGraphicsTextItem* titleText_1;
     QGraphicsTextItem* titleText_2;
+    QGraphicsTextItem* chooseCharacterText;
 
 public slots:
     void startGame();
