@@ -17,7 +17,7 @@ public:
     Game(QWidget *parent = nullptr);
     void keyPressEvent(QKeyEvent *event);
     void displayMainMenu(QString title, QString play);
-    void displayPlayerSelection(QString title, QString play);
+    void displayPlayerSelection(QString title);
     void gameOver();
     QGraphicsScene * scene;
     QGraphicsScene * scene2;
@@ -31,6 +31,7 @@ public:
     Button *player1Button;
     Button *player2Button;
     Button *player3Button;
+    QTimer *timer;
 
 private:
     QGraphicsTextItem* titleText_1;

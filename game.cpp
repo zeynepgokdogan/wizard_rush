@@ -40,11 +40,11 @@ void Game::keyPressEvent(QKeyEvent *event)
         QGraphicsView::keyPressEvent(event);
 }
 
-void Game::displayPlayerSelection(QString title, QString play)
+void Game::displayPlayerSelection(QString title)
 {
-    // Remove Health and Score
-    scene->removeItem(score);
-    scene->removeItem(health);
+    scene->removeItem(titleText_2);
+    scene->removeItem(playButton);
+    scene->removeItem(quitButton);
 
     // Declare titleText here
     titleText_1 = new QGraphicsTextItem(title);
@@ -66,28 +66,26 @@ void Game::displayPlayerSelection(QString title, QString play)
     scene->addItem(chooseCharacterText);
 
     // Create Buttons
-    int buttonWidth = 150; // Adjust this value as needed
-    int buttonHeight = 50; // Adjust this value as needed
     int spacing = 20;      // Adjust this value as needed
 
     player1Button = new Button("Player 1", titleText_1);
-    player1Button->setPos(width() / 2 - (buttonWidth + spacing) * 2, 600 / 2);
+    player1Button->setPos(-80 , height() / 2);
     connect(player1Button, &Button::clicked, [=]() {
-        displayMainMenu("Player 1 Selected", "Play");
+        startGame();
     });
     scene->addItem(player1Button);
 
     player2Button = new Button("Player 2", titleText_1);
-    player2Button->setPos(width() / 2 - buttonWidth / 2, 600 / 2);
+    player2Button->setPos(120, height() / 2);
     connect(player2Button, &Button::clicked, [=]() {
-        displayMainMenu("Player 2 Selected", "Play");
+        startGame();
     });
     scene->addItem(player2Button);
 
     player3Button = new Button("Player 3", titleText_1);
-    player3Button->setPos(width() / 2 + spacing, 600 / 2);
+    player3Button->setPos(320, height() / 2);
     connect(player3Button, &Button::clicked, [=]() {
-        displayMainMenu("Player 3 Selected", "Play");
+        startGame();
     });
     scene->addItem(player3Button);
 }
@@ -101,11 +99,6 @@ void Game::displayMainMenu(QString title, QString play)
     // Remove Health and Score
     scene->removeItem(score);
     scene->removeItem(health);
-    scene->removeItem(titleText_1);
-    scene->removeItem(chooseCharacterText);
-    scene->removeItem(player1Button);
-    scene->removeItem(player2Button);
-    scene->removeItem(player3Button);
 
 
     // Declare titleText here
@@ -124,16 +117,18 @@ void Game::displayMainMenu(QString title, QString play)
 
     // Create Play Button
     playButton = new Button(play, titleText_2);
-    int pxPos = width() / 2 - buttonWidth / 2;
+    int pxPos = (xPos - 300 - 100)/2;
     int pyPos = height() / 2;
     playButton->setPos(pxPos, pyPos);
-    connect(playButton, SIGNAL(clicked()), this, SLOT(startGame()));
+    connect(playButton, &Button::clicked, [=]() {
+        displayPlayerSelection("WizarD RusH");
+    });
     scene->addItem(playButton);
 
     // Create Quit Button
     quitButton = new Button("Quit", titleText_2);
-    int qxPos = width() / 2 - buttonWidth / 2;
-    int qyPos = height() / 1.5;
+    int qxPos = pxPos + 250;
+    int qyPos = height() / 2;
     quitButton->setPos(qxPos, qyPos);
     connect(quitButton, &Button::clicked, this, &Game::quitGame);
     scene->addItem(quitButton);
@@ -142,6 +137,8 @@ void Game::displayMainMenu(QString title, QString play)
 
 void Game::startGame()
 {
+
+    scene->removeItem(chooseCharacterText);
     // Remove previous instances of Health and Score
     if (health) {
         scene->removeItem(health);
@@ -187,7 +184,7 @@ void Game::startGame()
     player2 = player;
 
     //Add enemies
-    QTimer *timer = new QTimer();
+    timer = new QTimer();
     QObject::connect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
     int randomSecond = rand() % 1500;
     timer->start(1500 + randomSecond);
@@ -213,14 +210,17 @@ void Game::quitGame()
     QApplication::quit();  // This will gracefully close the application
 }
 
+void Game::handlePlayerSelection(int value) {
+
+}
 
 void Game::gameOver() {
     if (player) {
         disconnect(this, SIGNAL(playerKeyPressed(QKeyEvent*)), player, SLOT(keyPressEvent(QKeyEvent*)));
         player->clearFocus(); // Clear the focus from the player
-        scene->removeItem(player);
+        player->setVisible(false);
     }
-
+    disconnect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
     // Display the main menu
     displayMainMenu("GAME OVER!","PLAY AGAİN");
 }
