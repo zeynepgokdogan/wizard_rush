@@ -33,6 +33,8 @@ public:
     Button *player3Button;
     QTimer *timer;
 
+    bool isPlayer1, isPlayer2, isPlayer3;
+
 private:
     QGraphicsTextItem* titleText_1;
     QGraphicsTextItem* titleText_2;
@@ -41,6 +43,9 @@ private:
 public slots:
     void startGame();
     void quitGame();
+    void setPlayer1();
+    void setPlayer2();
+    void setPlayer3();
 
 private slots:
     void handlePlayerSelection(int playerNumber);

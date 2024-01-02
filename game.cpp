@@ -10,6 +10,10 @@
 
 Game::Game(QWidget *parent): QGraphicsView(parent){
     // create the scene
+    isPlayer1 = false;
+    isPlayer2 = false;
+    isPlayer3 = false;
+
     scene = new QGraphicsScene();
     scene->setSceneRect(0,0,800,600); // make the scene 800x600 instead of infinity by infinity (default)
     QImage backgroundImage(":/assets/blueBackground.jpg");
@@ -60,6 +64,7 @@ void Game::displayPlayerSelection(QString title)
     chooseCharacterText = new QGraphicsTextItem("Choose A Character");
     QFont font("arial", 20);
     chooseCharacterText->setFont(font);
+    chooseCharacterText->setDefaultTextColor(Qt::white);
     int xPos = width() / 2 - chooseCharacterText->boundingRect().width() / 2;
     int yPos = 250;
     chooseCharacterText->setPos(xPos, yPos);
@@ -71,14 +76,18 @@ void Game::displayPlayerSelection(QString title)
     player1Button = new Button("Player 1", titleText_1);
     player1Button->setPos(-80 , height() / 2);
     connect(player1Button, &Button::clicked, [=]() {
+        setPlayer1();
         startGame();
+
     });
     scene->addItem(player1Button);
 
     player2Button = new Button("Player 2", titleText_1);
     player2Button->setPos(120, height() / 2);
     connect(player2Button, &Button::clicked, [=]() {
+        setPlayer2();
         startGame();
+
     });
     scene->addItem(player2Button);
 
@@ -103,8 +112,9 @@ void Game::displayMainMenu(QString title, QString play)
 
     // Declare titleText here
     titleText_2 = new QGraphicsTextItem(title);
-    QFont titleFont("arial", 30);
+    QFont titleFont("arial", 50);
     titleText_2->setFont(titleFont);
+    titleText_2->setDefaultTextColor(Qt::red);
     int xPos = width() / 2 - titleText_2->boundingRect().width() / 2;
     int yPos = 150;
     titleText_2->setPos(xPos, yPos);
@@ -119,7 +129,7 @@ void Game::displayMainMenu(QString title, QString play)
     playButton = new Button(play, titleText_2);
     int pxPos = (xPos - 300 - 100)/2;
     int pyPos = height() / 2;
-    playButton->setPos(pxPos, pyPos);
+    playButton->setPos(pxPos+105, pyPos);
     connect(playButton, &Button::clicked, [=]() {
         displayPlayerSelection("WizarD RusH");
     });
@@ -129,7 +139,7 @@ void Game::displayMainMenu(QString title, QString play)
     quitButton = new Button("Quit", titleText_2);
     int qxPos = pxPos + 250;
     int qyPos = height() / 2;
-    quitButton->setPos(qxPos, qyPos);
+    quitButton->setPos(qxPos+105, qyPos);
     connect(quitButton, &Button::clicked, this, &Game::quitGame);
     scene->addItem(quitButton);
 }
@@ -223,6 +233,22 @@ void Game::gameOver() {
     disconnect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
     // Display the main menu
     displayMainMenu("GAME OVER!","PLAY AGAİN");
+}
+
+void Game::setPlayer1(){
+    isPlayer1 = true;
+    isPlayer2 = false;
+    isPlayer3 = false;
+}
+void Game::setPlayer2(){
+    isPlayer2 = true;
+    isPlayer1 = false;
+    isPlayer3 = false;
+}
+void Game::setPlayer3(){
+    isPlayer3 = true;
+    isPlayer1 = false;
+    isPlayer2 = false;
 }
 
 

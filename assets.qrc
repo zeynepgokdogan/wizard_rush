@@ -1,13 +1,13 @@
 <RCC>
     <qresource prefix="/">
-        <file>assets/bg1.jpg</file>
         <file>assets/blueBackground.jpg</file>
         <file>assets/cactus.png</file>
         <file>assets/enemy.png</file>
         <file>assets/skull.png</file>
         <file>assets/wizardE.png</file>
-        <file>assets/character1.png</file>
-        <file>assets/character2.png</file>
-        <file>assets/character3.png</file>
+        <file>assets/flyingPotter.png</file>
+        <file>assets/potion.png</file>
+        <file>assets/wizardE2.png</file>
+        <file>assets/wizardE3.png</file>
     </qresource>
 </RCC>

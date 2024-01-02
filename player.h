@@ -10,14 +10,26 @@ class Player:public QObject, public QGraphicsPixmapItem{
 public:
     Player(QGraphicsItem * parent=0);
     void keyPressEvent(QKeyEvent * event);
+    void keyReleaseEvent(QKeyEvent * event);
     QTimer * timerOne;
     QTimer * timerTwo;
     QTimer * timerThree;
+    QTimer * timerUp;
+    QTimer * timerDown;
+    QTimer * timerRight;
+    QTimer * timerLeft;
+    //QTimer * timerInvisible;
+    bool isUp, isDown, isLeft, isRight;
 public slots:
     void spawn();
     void jump();
     void fall();
     void instaFall();
+    void up();
+    void down();
+    void right();
+    void left();
+    //void invisible();
 };
 
 #endif // PLAYER_H
