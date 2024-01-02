@@ -39,6 +39,9 @@ private:
     QGraphicsTextItem* titleText_1;
     QGraphicsTextItem* titleText_2;
     QGraphicsTextItem* chooseCharacterText;
+    QGraphicsPixmapItem* player1Image;
+    QGraphicsPixmapItem* player2Image;
+    QGraphicsPixmapItem* player3Image;
 
 public slots:
     void startGame();

@@ -7,6 +7,8 @@
 #include <QBrush>
 #include <QImage>
 #include <QGraphicsView>
+#include <QPixmap>
+
 
 Game::Game(QWidget *parent): QGraphicsView(parent){
     // create the scene
@@ -52,9 +54,9 @@ void Game::displayPlayerSelection(QString title)
 
     // Declare titleText here
     titleText_1 = new QGraphicsTextItem(title);
-    QFont titleFont("arial", 50);
+    QFont titleFont("Algerian", 50, QFont::Bold);
     titleText_1->setFont(titleFont);
-    titleText_1->setDefaultTextColor(Qt::red);
+    titleText_1->setDefaultTextColor(Qt::darkRed);
     int titleXPos = width() / 2 - titleText_1->boundingRect().width() / 2;
     int titleYPos = 150;
     titleText_1->setPos(titleXPos, titleYPos);
@@ -62,7 +64,7 @@ void Game::displayPlayerSelection(QString title)
 
     // second title
     chooseCharacterText = new QGraphicsTextItem("Choose A Character");
-    QFont font("arial", 20);
+    QFont font("Algerian", 20);
     chooseCharacterText->setFont(font);
     chooseCharacterText->setDefaultTextColor(Qt::white);
     int xPos = width() / 2 - chooseCharacterText->boundingRect().width() / 2;
@@ -97,10 +99,35 @@ void Game::displayPlayerSelection(QString title)
         startGame();
     });
     scene->addItem(player3Button);
+
+    // Load player images
+    QPixmap player1Pixmap(":/assets/player1.png");
+    QPixmap player2Pixmap(":/assets/player2.png");
+    QPixmap player3Pixmap(":/assets/player3.png");
+
+    // Define a desired width for the player images
+    int playerImageWidth = 50;
+
+    // Scale down player images
+    player1Pixmap = player1Pixmap.scaledToWidth(playerImageWidth + 10, Qt::SmoothTransformation);
+    player2Pixmap = player2Pixmap.scaledToWidth(playerImageWidth - 10, Qt::SmoothTransformation);
+    player3Pixmap = player3Pixmap.scaledToWidth(playerImageWidth, Qt::SmoothTransformation);
+
+    // Create QGraphicsPixmapItems for each player image
+    player1Image = new QGraphicsPixmapItem(player1Pixmap);
+    player2Image = new QGraphicsPixmapItem(player2Pixmap);
+    player3Image = new QGraphicsPixmapItem(player3Pixmap);
+
+    // Set positions for player images
+    player1Image->setPos(125 , (height() / 2)+10);
+    player2Image->setPos(335, (height() / 2)+10);
+    player3Image->setPos(535, (height() / 2)+10);
+
+    // Add player images to the scene
+    scene->addItem(player1Image);
+    scene->addItem(player2Image);
+    scene->addItem(player3Image);
 }
-
-
-
 
 
 void Game::displayMainMenu(QString title, QString play)
@@ -112,9 +139,9 @@ void Game::displayMainMenu(QString title, QString play)
 
     // Declare titleText here
     titleText_2 = new QGraphicsTextItem(title);
-    QFont titleFont("arial", 50);
+    QFont titleFont("Algerian", 50, QFont::Bold);
     titleText_2->setFont(titleFont);
-    titleText_2->setDefaultTextColor(Qt::red);
+    titleText_2->setDefaultTextColor(Qt::darkRed);
     int xPos = width() / 2 - titleText_2->boundingRect().width() / 2;
     int yPos = 150;
     titleText_2->setPos(xPos, yPos);
@@ -182,6 +209,12 @@ void Game::startGame()
     scene->removeItem(titleText_1);
 
 
+    // Remove player images
+    scene->removeItem(player1Image);
+    scene->removeItem(player2Image);
+    scene->removeItem(player3Image);
+
+
     // Create the player and Add the player to the scene
     player = new Player();
     player->setPos(80, 400);
@@ -209,19 +242,12 @@ void Game::startGame()
     connect(this, SIGNAL(playerKeyPressed(QKeyEvent*)), player, SLOT(keyPressEvent(QKeyEvent*)));
     connect(player, SIGNAL(keyPressEvent(QKeyEvent*)), this, SIGNAL(playerKeyPressed(QKeyEvent*)));
 
-
     scene->removeItem(titleText_2);
-
-
 }
 
 void Game::quitGame()
 {
     QApplication::quit();  // This will gracefully close the application
-}
-
-void Game::handlePlayerSelection(int value) {
-
 }
 
 void Game::gameOver() {
@@ -233,6 +259,7 @@ void Game::gameOver() {
     disconnect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
     // Display the main menu
     displayMainMenu("GAME OVER!","PLAY AGAİN");
+    scene->addItem(score);
 }
 
 void Game::setPlayer1(){

@@ -8,7 +8,7 @@ Score::Score(QGraphicsItem *parent): QGraphicsTextItem(parent){
     // draw the text
     setPlainText(QString("Score: ") + QString::number(score)); // Score: 0
     setDefaultTextColor(Qt::white);
-    setFont(QFont("times",16));
+    setFont(QFont("Algerian", 16, QFont::Bold));
 }
 
 void Score::increase(){
