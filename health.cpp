@@ -25,6 +25,13 @@ void Health::decrease(){
         game->gameOver();
     }
 }
+void Health::increase(){
+    health++;
+    setPlainText(QString("Health: ") + QString::number(health)); // Health: 2
+
+    // if health is 0 then the player must die. I temporarily made it to close the game but
+    // this part is going to be pop-up the restart screen
+}
 
 int Health::getHealth(){
     return health;

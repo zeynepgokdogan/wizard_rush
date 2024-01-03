@@ -28,12 +28,14 @@ public:
     Button *playButton;
     Button *quitButton;
 
+
     Button *player1Button;
     Button *player2Button;
     Button *player3Button;
     QTimer *timer;
+    QTimer *timerP;
 
-    bool isPlayer1, isPlayer2, isPlayer3;
+    bool isPlayer1, isPlayer2, isPlayer3, isPotioned;
 
 private:
     QGraphicsTextItem* titleText_1;
@@ -42,6 +44,7 @@ private:
     QGraphicsPixmapItem* player1Image;
     QGraphicsPixmapItem* player2Image;
     QGraphicsPixmapItem* player3Image;
+
 
 public slots:
     void startGame();

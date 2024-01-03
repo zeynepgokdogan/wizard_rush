@@ -18,10 +18,11 @@ public:
     QTimer * timerDown;
     QTimer * timerRight;
     QTimer * timerLeft;
-    //QTimer * timerInvisible;
+    //QTimer * timerInvis;
     bool isUp, isDown, isLeft, isRight;
 public slots:
     void spawn();
+    void spawnP();
     void jump();
     void fall();
     void instaFall();

@@ -5,13 +5,11 @@
 #include <stdlib.h> // rand() -> really large int
 #include "Game.h"
 
-
 extern Game * game;
-
 
 Enemy::Enemy(QGraphicsItem *parent): QObject(), QGraphicsPixmapItem(parent){
     //set random x position
-    if(game->isPlayer1){
+    if(game->isPlayer1 || game->isPlayer3){
         setPos(650,420);
 
         // drew the rect
@@ -60,6 +58,7 @@ void Enemy::move(){
     // if one of the colliding items is the Player, destroy the enemy
     for (int i = 0, n = colliding_items.size(); i < n; ++i){
 
+        if(!(game->isPotioned)){
             if (typeid(*(colliding_items[i])) == typeid(Player)){
                 //decrease the health
                 game->health->decrease();
@@ -75,7 +74,7 @@ void Enemy::move(){
                 // return (all code below refers to a non existint bullet)
                 return;
             }
-
+        }
     }
 
     // destroy enemy when it goes out of the screen

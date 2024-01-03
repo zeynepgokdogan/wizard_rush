@@ -15,6 +15,7 @@ SOURCES += \
     health.cpp \
     main.cpp \
     player.cpp \
+    potion.cpp \
     score.cpp
 
 HEADERS += \
@@ -23,6 +24,7 @@ HEADERS += \
     game.h \
     health.h \
     player.h \
+    potion.h \
     score.h
 
 # Default rules for deployment.

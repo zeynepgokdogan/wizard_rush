@@ -9,12 +9,14 @@
 #include <QGraphicsView>
 #include <QPixmap>
 
-
 Game::Game(QWidget *parent): QGraphicsView(parent){
     // create the scene
     isPlayer1 = false;
     isPlayer2 = false;
     isPlayer3 = false;
+    isPotioned = false;
+
+
 
     scene = new QGraphicsScene();
     scene->setSceneRect(0,0,800,600); // make the scene 800x600 instead of infinity by infinity (default)
@@ -64,7 +66,7 @@ void Game::displayPlayerSelection(QString title)
 
     // second title
     chooseCharacterText = new QGraphicsTextItem("Choose A Character");
-    QFont font("Algerian", 20);
+    QFont font("arial", 20);
     chooseCharacterText->setFont(font);
     chooseCharacterText->setDefaultTextColor(Qt::white);
     int xPos = width() / 2 - chooseCharacterText->boundingRect().width() / 2;
@@ -96,6 +98,7 @@ void Game::displayPlayerSelection(QString title)
     player3Button = new Button("Player 3", titleText_1);
     player3Button->setPos(320, height() / 2);
     connect(player3Button, &Button::clicked, [=]() {
+        setPlayer3();
         startGame();
     });
     scene->addItem(player3Button);
@@ -119,16 +122,15 @@ void Game::displayPlayerSelection(QString title)
     player3Image = new QGraphicsPixmapItem(player3Pixmap);
 
     // Set positions for player images
-    player1Image->setPos(125 , (height() / 2)+10);
-    player2Image->setPos(335, (height() / 2)+10);
-    player3Image->setPos(535, (height() / 2)+10);
+    player1Image->setPos(140 , (height() / 2)+10);
+    player2Image->setPos(350, (height() / 2)+10);
+    player3Image->setPos(550, (height() / 2)+10);
 
     // Add player images to the scene
     scene->addItem(player1Image);
     scene->addItem(player2Image);
     scene->addItem(player3Image);
 }
-
 
 void Game::displayMainMenu(QString title, QString play)
 {
@@ -208,7 +210,6 @@ void Game::startGame()
     scene->removeItem(quitButton);
     scene->removeItem(titleText_1);
 
-
     // Remove player images
     scene->removeItem(player1Image);
     scene->removeItem(player2Image);
@@ -232,6 +233,11 @@ void Game::startGame()
     int randomSecond = rand() % 1500;
     timer->start(1500 + randomSecond);
 
+    timerP = new QTimer();
+    QObject::connect(timerP, SIGNAL(timeout()), player, SLOT(spawnP()));
+    int randomSecondP = (rand() % 3000) + 12000;
+    timerP->start(10 + randomSecondP);
+
     // Disconnect existing connections before creating new ones
     disconnect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
     disconnect(this, SIGNAL(playerKeyPressed(QKeyEvent*)), player, SLOT(keyPressEvent(QKeyEvent*)));
@@ -242,12 +248,17 @@ void Game::startGame()
     connect(this, SIGNAL(playerKeyPressed(QKeyEvent*)), player, SLOT(keyPressEvent(QKeyEvent*)));
     connect(player, SIGNAL(keyPressEvent(QKeyEvent*)), this, SIGNAL(playerKeyPressed(QKeyEvent*)));
 
+
     scene->removeItem(titleText_2);
 }
 
 void Game::quitGame()
 {
     QApplication::quit();  // This will gracefully close the application
+}
+
+void Game::handlePlayerSelection(int value) {
+
 }
 
 void Game::gameOver() {
@@ -257,9 +268,10 @@ void Game::gameOver() {
         player->setVisible(false);
     }
     disconnect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
-    // Display the main menu
-    displayMainMenu("GAME OVER!","PLAY AGAİN");
-    scene->addItem(score);
+    if(isPlayer3){
+    disconnect(timerP, SIGNAL(timeout()), player, SLOT(spawnP()));
+    } // Display the main menu
+    displayMainMenu("GAME OVER!","PLAY AGAIN");
 }
 
 void Game::setPlayer1(){
@@ -277,5 +289,6 @@ void Game::setPlayer3(){
     isPlayer1 = false;
     isPlayer2 = false;
 }
+
 
 
